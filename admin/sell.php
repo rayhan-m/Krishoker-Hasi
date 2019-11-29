@@ -1,0 +1,217 @@
+<?php
+session_start();
+$message="";
+if ($_SESSION['admin_login'] == TRUE) {
+	require_once './DBManager.php';
+	$DBM = new DBManager();
+	if(!isset($_GET['abc'])){
+		@$bid_id=$_POST['bid_id'];
+		$query = $DBM->Select($bid_id);
+		$select = mysqli_fetch_assoc($query);
+	}else{
+		echo "not";
+	}
+
+	if (isset($_POST['button'])) {
+		$DBM->sellProduct($_POST);
+	}
+	?>
+
+	
+	<?php include("include/header.php"); ?>
+	<?php include("include/menubar.php"); ?>
+	<script>
+		function myFunction() {
+		    var x = document.getElementById("quantity");
+		    if(x.value <=0){
+		    	x.value="";
+		    } 
+		}
+
+	</script>
+	<!-- PAGE CONTAINER-->
+	<div class="page-container">
+		<!-- MENU SIDEBAR-->
+		<aside class="menu-sidebar d-none d-lg-block">
+			<div class="logo">
+				<a href="#">
+					<img src="images/icon/logo.png" alt="Cool Admin" />
+				</a>
+			</div>
+						<div class="menu-sidebar__content js-scrollbar1">
+				<nav class="navbar-sidebar">
+					<h3 style="text-align: center; margin: 8px 0px; font-size: 20px; background-color: #82ae46; padding: 8px 0;color:#fff;">Menu Bar</h3>
+					<ul class="list-unstyled navbar__list">
+					<li class="active menu">
+						<a  href="index.php"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+					</li>
+					<li class="menu">
+						<a href="category.php"><i class="fas fa-user"></i>Category</a>
+					</li>
+					<li class="menu">
+						<a href="staff.php"><i class="fas fa-user"></i>Staff</a>
+					</li>
+					<li class="menu">
+						<a href="customer.php"><i class="fas fa-user"></i>Customer</a>
+					</li>
+						<li class=" has-sub menu">
+							<a class="js-arrow" href="#">
+								<i class="fas fa-dollar-sign"></i>Payment</a>
+								<ul class="list-unstyled navbar__sub-list js-sub-list">
+									<li>
+										<a href="staff-payment.php">Staff Payment</a>
+									</li>
+									
+								</ul>
+							</li>
+							<li class=" has-sub menu">
+								<a class="js-arrow" href="#">
+									<i class="fas fa-th"></i>Products</a>
+									<ul class="list-unstyled navbar__sub-list js-sub-list">
+										<li>
+											<a href="product.php">Products List</a>
+										</li>
+
+									</ul>
+								</li>
+								<li class=" has-sub menu" >
+									<a class="js-arrow" href="#">
+										<i class="fas fa-cart-arrow-down"></i>Sell Information</a>
+										<ul class="list-unstyled navbar__sub-list js-sub-list">
+											<li>
+													<a href="sell.php">Sell Product</a>
+												</li>
+											<li>
+												<a href="sell-product.php">Total Sell</a>
+											</li>
+										</ul>
+									</li>
+
+									<li class="menu">
+									<a href="vehicle.php"><i class="fas fa-user"></i>Vehicle</a>
+										</li>
+									
+
+									<li class=" has-sub menu">
+									<a class="js-arrow" href="#">
+										<i class="fas fa-cart-arrow-down"></i>Manage Delivery</a>
+										<ul class="list-unstyled navbar__sub-list js-sub-list">
+											<li>
+													<a href="add-delivery.php">Add new Delivery</a>
+												</li>
+											<li>
+												<a href="delivery-report.php">Delivery Report</a>
+											</li>
+										</ul>
+									</li>	
+
+									
+									<li class=" has-sub menu">
+										<a class="js-arrow" href="#">
+											<i class="fas fa-file-powerpoint"></i>Report</a>
+											<ul class="list-unstyled navbar__sub-list js-sub-list">
+												<li>
+													<a href="total-sell.php">Total Sell</a>
+												</li>
+											
+											</ul>
+										</li>
+									</ul>
+									</nav>
+								</div>
+							</aside>
+							<!-- END MENU SIDEBAR-->
+							<!-- MAIN CONTENT-->
+							<div class="main-content">
+								<div>
+									<div class="section__content section__content--p30">
+										<div class="container-fluid">
+											<div class="row">
+												<div class="col-md-10 col-md-offset-1">
+													<h3 style="text-align:center; color: #82ae46;">Sell Product</h3>
+													<div class="form-group row">
+														<label class="col-4 col-form-label">Bid ID:</label>
+														<div class="col-8">
+															<form action="" method="post">
+
+																<select type="text" class="form-control here" name="bid_id"  required>
+																	<option value="">~~SELECT~~</option>
+
+
+																	<?php
+																	$connection = mysqli_connect('localhost', 'root', '', 'hasi');
+																	date_default_timezone_set('Asia/Dhaka');
+																	$current_date=date('m/d/Y');
+																	$sql = "SELECT bid_id from bid_board WHERE end_date<'$current_date'";
+																	$result = $connection->query($sql);
+
+																	while ($row = $result->fetch_array()) {
+																		echo "<option value='" . $row['bid_id'] . "'>" . $row['bid_id'] . "</option>";
+    } // while
+    
+    ?>
+</select>
+
+
+<button type="submit" name="abc" class="btn btn-primary ">Select</button>
+</form>
+</div>
+</div> 
+
+<form action="" method="post">   
+	
+	<div class="form-group row">
+		<label class="col-4 col-form-label">Bid ID</label> 
+		<div class="col-8">
+			<input class="form-control here " name="bid_id" readonly value="<?php echo $select['bid_id'];?>">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-4 col-form-label">Product Name</label> 
+		<div class="col-8">
+			<input class="form-control here " name="title" readonly value="<?php echo $select['title'];?>">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-4 col-form-label">Price/Kg</label> 
+		<div class="col-8">
+			<input class="form-control here " name="price" readonly value="<?php echo $select['price'];?>">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-4 col-form-label">Quantity</label> 
+		<div class="col-8">
+			<input type="number" name="quantity" id="quantity" onblur="myFunction()" class="form-control here" placeholder="Enter Quantity" required>
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-4 col-form-label">Sold To</label> 
+		<div class="col-8">
+			<input class="form-control here" 
+			name="sold_to" readonly value="<?php echo $select['user_name'];?>">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-4 col-form-label">Sold By</label> 
+		<div class="col-8">
+			<input class="form-control here " 
+			name="sold_by"	readonly value="<?php echo $select['u_name'];?>">
+		</div>
+	</div>
+	<div class="form-group row">
+		<label class="col-4 col-form-label"></label>
+		<div class="col-8">
+			<button type="submit" name="button" class="btn btn-primary ">Confirm Sell</button>
+			<a href="sell-product.php" class="btn btn-secondary pull-right">Cancel</a>
+		</div>
+	</div>
+</form>
+</div>
+</div>
+</div>
+<!-- END MAIN CONTENT-->
+<?php include("include/footer.php"); 
+}else{
+	header('location:login.php');
+}
+?>
